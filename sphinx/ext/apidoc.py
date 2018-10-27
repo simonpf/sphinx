@@ -27,6 +27,8 @@ from os import path
 
 from six import binary_type
 
+import sphinx
+import sphinx.cmd
 import sphinx.locale
 from sphinx import __display_version__, package_dir
 from sphinx.cmd.quickstart import EXTENSIONS
@@ -114,7 +116,7 @@ def create_module_file(package, module, opts):
 def create_package_file(root, master_package, subroot, py_files, opts, subs, is_namespace, excludes=[]):  # NOQA
     # type: (unicode, unicode, unicode, List[unicode], Any, List[unicode], bool, List[unicode]) -> None  # NOQA
     """Build the text of the file and write the file."""
-    text = format_heading(1, ('%s package' if not is_namespace else "%s namespace")
+    text = format_heading(1, ('%s' if not is_namespace else "%s")
                           % makename(master_package, subroot))
 
     if opts.modulefirst and not is_namespace:
@@ -129,19 +131,19 @@ def create_package_file(root, master_package, subroot, py_files, opts, subs, is_
             shall_skip(path.join(root, sub, INITPY), opts, excludes)]
     # if there are some package directories, add a TOC for theses subpackages
     if subs:
-        text += format_heading(2, 'Subpackages')
-        text += '.. toctree::\n\n'
+        text += format_heading(2, 'Contents')
+        text += '.. toctree::\n   :maxdepth: 1\n\n'
         for sub in subs:
-            text += '    %s.%s\n' % (makename(master_package, subroot), sub)
+            text += '   %s.%s\n' % (makename(master_package, subroot), sub)
         text += '\n'
 
     submods = [path.splitext(sub)[0] for sub in py_files
                if not shall_skip(path.join(root, sub), opts, excludes) and
                sub != INITPY]
     if submods:
-        text += format_heading(2, 'Submodules')
+        #text += format_heading(2, 'Submodules')
         if opts.separatemodules:
-            text += '.. toctree::\n\n'
+            #text += '.. toctree::\n\n'
             for submod in submods:
                 modfile = makename(master_package, makename(subroot, submod))
                 text += '   %s\n' % modfile
